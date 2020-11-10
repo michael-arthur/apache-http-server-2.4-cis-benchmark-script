@@ -1,10 +1,9 @@
 #!/bin/bash
 
 a="Apache_HTTP_Server_2.4.txt"
-flag=0
-while [ $flag -ne 1 ]
-do
-echo -e "\nEnter the configuration file location\n"
+
+#hard coding  location of httpd file 
+loc="/etc/httpd/conf/httpd.conf"
 read loc
 y=$(ls -al $loc 2>&1)
 var=$(echo $y | grep "No such file")
@@ -289,7 +288,7 @@ IPS=$(egrep -ih '^\s*Listen ' $CONFS | egrep -iv '(:443\b)|https' | cut -d' ' -f
 #Get host names and ports of all of the virtual hosts
 VHOSTS=$(egrep -iho '^\s*<VirtualHost .*>' $CONFS | egrep -io '\s+[A-Z:.0-9]+>$' | tr -d ' >')
 URLS=$(for h in $LIPADDR $VHOSTS ; do echo "http://$h/"; done)
-#For each of the URL’s test with curl, and truncate the output to 300 characters
+#For each of the URLï¿½s test with curl, and truncate the output to 300 characters
 for u in $URLS ; do echo -e "\n\n\n=== $u ==="; curl -fSs $u | head -c 300 ; done >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
