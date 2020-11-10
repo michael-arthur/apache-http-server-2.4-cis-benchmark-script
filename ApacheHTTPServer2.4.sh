@@ -1,6 +1,6 @@
 #!/bin/bash
 
-a="Apache_HTTP_Server_2.4.txt"
+a="/ect/httpd/benchmark/Apache_HTTP_Server_2.4.txt"
 
 #hard coding  location of httpd file 
 loc="/etc/httpd/conf/httpd.conf"
