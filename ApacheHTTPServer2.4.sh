@@ -1,19 +1,12 @@
 #!/bin/bash
 
-a="/ect/httpd/benchmark/Apache_HTTP_Server_2.4.txt"
+a="Apache_HTTP_Server_2.4.txt"
 
-#hard coding  location of httpd file 
-loc="/etc/httpd/conf/httpd.conf"
-read loc
+#hard coding  location of httpd file
+loc="/etc/httpd/conf/ /etc/httpd/conf.d/"
+read -t 3 loc
 y=$(ls -al $loc 2>&1)
 var=$(echo $y | grep "No such file")
-if [ -z "$var" ];
-then
-  break
-fi
-echo -e "\nThe Configuration file doesn't exist.Type again\n"
-done
-
 
 echo -e "\n ===========================================================================================\n" >> $a
 echo -e "\n|                    Apache HTTP Server 2.4 CIS Benchmark v1.5.0 Script                     |\n" >> $a
@@ -409,103 +402,5 @@ aa-unconfined --paranoid | grep apache2 >> $a
 
 
 echo -e "\n==========================================================================================\n" >> $a
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
