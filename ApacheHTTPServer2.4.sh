@@ -3,7 +3,7 @@
 a="Apache_HTTP_Server_2.4.txt"
 
 #hard coding  location of httpd file
-loc="/etc/httpd/conf/ /etc/httpd/conf.d/"
+loc="/etc/httpd/conf /etc/httpd/conf.d"
 read -t 3 loc
 y=$(ls -al $loc 2>&1)
 var=$(echo $y | grep "No such file")
