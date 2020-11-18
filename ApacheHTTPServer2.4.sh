@@ -1,11 +1,13 @@
 #!/bin/bash
 
+cd /etc/httpd/benchmark/
+
 a="Apache_HTTP_Server_2.4.txt"
 
 #hard coding  location of httpd file
-loc="/etc/httpd/conf /etc/httpd/conf.d"
+loc="/etc/httpd/conf/httpd.conf"
 read -t 3 loc
-y=$(ls -al $loc 2>&1)
+y=$(ls -al /etc/httpd/conf/httpd.conf 2>&1)
 var=$(echo $y | grep "No such file")
 
 echo -e "\n ===========================================================================================\n" >> $a
@@ -171,35 +173,35 @@ echo -e "\nManual Check should also be done\n" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n5.7 Ensure HTTP Request Methods Are Restricted\n" >> $a
-cat $loc | grep "LimitExcept" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "LimitExcept" >> $a
 
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n5.8 Ensure the HTTP TRACE Method Is Disabled\n" >> $a
-cat $loc | grep "TraceEnable" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "TraceEnable" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n5.9 Ensure Old HTTP Protocol Versions Are Disallowed \n" >> $a
 ./configure --enable-rewrite.
-cat $loc | grep "RewriteEngine On\|RewriteCond \%{THE_REQUEST}\|RewriteRule \.\* \- \[F\]\|RewriteOptions Inherit" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "RewriteEngine On\|RewriteCond \%{THE_REQUEST}\|RewriteRule \.\* \- \[F\]\|RewriteOptions Inherit" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n5.10 Ensure Access to .ht* Files Is Restricted\n" >> $a
-cat $loc | grep -e "^<FilesMatch \"\^\\\.ht\">\|Require all denied\|<\/FilesMatch>" -n >> $a
+cat /etc/httpd/conf/httpd.conf | grep -e "^<FilesMatch \"\^\\\.ht\">\|Require all denied\|<\/FilesMatch>" -n >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n5.11 Ensure Access to Inappropriate File Extensions Is Restricted\n" >> $a
 find */htdocs -type f -name '*.*' | awk -F. '{print $NF }' | sort -u >> $a
-cat $loc | grep -e "^<FilesMatch \"\^\\\.*$\">\|Require all denied\|<\/FilesMatch>" -n >> $a
-cat $loc | grep -e "^<FilesMatch \"\^\\\.*\\\.(\|Require all denied\|<\/FilesMatch>" -n >> $a
+cat /etc/httpd/conf/httpd.conf | grep -e "^<FilesMatch \"\^\\\.*$\">\|Require all denied\|<\/FilesMatch>" -n >> $a
+cat /etc/httpd/conf/httpd.conf | grep -e "^<FilesMatch \"\^\\\.*\\\.(\|Require all denied\|<\/FilesMatch>" -n >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n5.12 Ensure IP Address Based Requests Are Disallowed\n" >> $a
-cat $loc | grep "RewriteEngine On\|RewriteCond \%{HTTP_HOST}\|RewriteCond \%{REQUEST_URI}\|RewriteRule \^\.(\.*) \- \[L\,F\]" -n >> $a
+cat /etc/httpd/conf/httpd.conf | grep "RewriteEngine On\|RewriteCond \%{HTTP_HOST}\|RewriteCond \%{REQUEST_URI}\|RewriteRule \^\.(\.*) \- \[L\,F\]" -n >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n5.13 Ensure the IP Addresses for Listening for Requests Are Specified\n" >> $a
-cat $loc | grep "^Listen" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "^Listen" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n5.14 Ensure Browser Framing Is Restricted\n" >> $a
@@ -207,15 +209,15 @@ grep -i X-Frame-Options $APACHE_PREFIX/conf/httpd.conf >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n6.1 Ensure the Error Log Filename and Severity Level Are Configured Correctly\n" >> $a
-cat $loc | grep "LogLevel\|ErrorLog" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "LogLevel\|ErrorLog" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n6.2 Ensure a Syslog Facility Is Configured for Error Logging\n" >> $a
-cat $loc | grep "ErrorLog \"syslog" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "ErrorLog \"syslog" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n6.3 Ensure the Server Access Log Is Configured Correctly\n" >> $a
-cat $loc | grep "^LogFormat\|^CustomLog" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "^LogFormat\|^CustomLog" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n6.4 Ensure Log Storage and Rotation Is Configured Correctly\n" >> $a
@@ -244,13 +246,13 @@ echo -e "\nManual Check Required\n" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n7.3 Ensure the Server's Private Key Is Protected\n" >> $a
-cat $loc | grep "^SSLCertificateFile\|^SSLCertificateKeyFile" -n >> $a
-temp=$(cat $loc | grep "^SSLCertificateKeyFile" | cut -d " " -f 2)
+cat /etc/httpd/conf/httpd.conf | grep "^SSLCertificateFile\|^SSLCertificateKeyFile" -n >> $a
+temp=$(cat /etc/httpd/conf/httpd.conf | grep "^SSLCertificateKeyFile" | cut -d " " -f 2)
 ls -al $temp >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n7.4 Ensure Weak SSL Protocols Are Disabled\n" >> $a
-cat $loc | grep "^SSLProtocol" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "^SSLProtocol" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n7.5 Ensure Weak SSL/TLS Ciphers Are Disabled\n" >> $a
@@ -258,11 +260,11 @@ echo -e "\nManual Check Required\n" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n7.6 Ensure Insecure SSL Renegotiation Is Not Enabled\n" >> $a
-cat $loc | grep "^SSLInsecureRenegotiation" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "^SSLInsecureRenegotiation" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n7.7 Ensure SSL Compression is not Enabled\n" >> $a
-cat $loc | grep "^SSLCompression" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "^SSLCompression" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n7.8 Ensure Medium Strength SSL/TLS Ciphers Are Disabled\n" >> $a
@@ -274,8 +276,8 @@ echo -e "\n Enter the list of all apache configuration files in the following fo
 echo -e "\n Eg: /etc/httpd/conf /etc/httpd/conf.d /etc/httpd/conf_dir2"
 #Replace the following directory list with the appropriate list.
 #CONF_DIRS="/etc/httpd/conf /etc/httpd/conf.d /etc/httpd/conf_dir2 . . ."
-read CONF_DIRS
-CONFS=$(find $CONF_DIRS -type f -name '*.conf' )
+read -t 3 /etc/httpd/conf /etc/httpd/conf.d
+CONFS=$(find /etc/httpd/conf /etc/httpd/conf.d -type f -name '*.conf' )
 #Search for Listen directives that are not port :443 or https
 IPS=$(egrep -ih '^\s*Listen ' $CONFS | egrep -iv '(:443\b)|https' | cut -d' ' -f2)
 #Get host names and ports of all of the virtual hosts
@@ -286,15 +288,15 @@ for u in $URLS ; do echo -e "\n\n\n=== $u ==="; curl -fSs $u | head -c 300 ; don
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n7.10 Ensure the TLSv1.0 and TLSv1.1 Protocols are Disabled\n" >> $a
-cat $loc | grep "^SSLProtocol TLSv1.2 *" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "^SSLProtocol TLSv1.2 *" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n7.11 Ensure OCSP Stapling Is Enabled\n" >> $a
-cat $loc | grep "^SSLStaplingCache\|^SSLUseStapling" -n >> $a
+cat /etc/httpd/conf/httpd.conf | grep "^SSLStaplingCache\|^SSLUseStapling" -n >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n7.12 Ensure HTTP Strict Transport Security Is Enabled\n" >> $a
-cat $loc | grep "^Header always set Strict-Transport-Security \"max-age\=600\"" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "^Header always set Strict-Transport-Security \"max-age\=600\"" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n7.13 Ensure Only Cipher Suites That Provide Forward Secrecy Are Enabled\n" >> $a
@@ -302,71 +304,71 @@ echo -e "\nManual Check Required\n" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n8.1 Ensure ServerTokens is Set to Prod or ProductOnly\n" >> $a
-cat $loc | grep "^ServerTokens" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "^ServerTokens" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n8.2 Ensure ServerSignature Is Not Enabled\n" >> $a
-cat $loc | grep "^ServerSignature Off" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "^ServerSignature Off" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n8.3 Ensure All Default Apache Content Is Removed\n" >> $a
-cat $loc | grep "Include conf/extra/httpd-autoindex.conf" >> $a
-cat $loc | grep "Alias /icons/ \"/var/www/icons/\"" >> $a
-cat $loc | grep "<Directory \"/var/www/icons\">" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "Include conf/extra/httpd-autoindex.conf" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "Alias /icons/ \"/var/www/icons/\"" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "<Directory \"/var/www/icons\">" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n8.4 Ensure ETag Response Header Fields Do Not Include Inodes\n" >> $a
-cat $loc | grep "FileETag" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "FileETag" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n9.1 Ensure the TimeOut Is Set to 10 or Less\n" >> $a
-cat $loc | grep "Timeout" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "Timeout" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n9.2 Ensure KeepAlive Is Enabled\n" >> $a
-cat $loc | grep "KeepAlive" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "KeepAlive" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n9.2 Ensure KeepAlive Is Enabled\n" >> $a
-cat $loc | grep "KeepAlive" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "KeepAlive" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n9.3 Ensure MaxKeepAliveRequests is Set to a Value of 100 or Greater\n" >> $a
-cat $loc | grep "MaxKeepAliveRequests" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "MaxKeepAliveRequests" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n9.4 Ensure KeepAliveTimeout is Set to a Value of 15 or Less\n" >> $a
-cat $loc | grep "KeepAliveTimeout" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "KeepAliveTimeout" >> $a
 
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n9.5 Ensure the Timeout Limits for Request Headers is Set to 40 or Less\n" >> $a
-cat $loc | grep "RequestReadTimeout" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "RequestReadTimeout" >> $a
 
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n9.6 Ensure Timeout Limits for the Request Body is Set to 20 or Less\n" >> $a
-cat $loc | grep "RequestReadTimeout" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "RequestReadTimeout" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n10.1 Ensure the LimitRequestLine directive is Set to 512 or less\n" >> $a
-cat $loc | grep "LimitRequestline" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "LimitRequestline" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n10.2 Ensure the LimitRequestFields Directive is Set to 100 or Less\n" >> $a
-cat $loc | grep "LimitRequestFields" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "LimitRequestFields" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n10.3 Ensure the LimitRequestFieldsize Directive is Set to 1024 or Less\n" >> $a
-cat $loc | grep "LimitRequestFieldsize" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "LimitRequestFieldsize" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n10.4 Ensure the LimitRequestBody Directive is Set to 102400 or Less\n" >> $a
-cat $loc | grep "LimitRequestBody" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "LimitRequestBody" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n10.4 Ensure the LimitRequestBody Directive is Set to 102400 or Less\n" >> $a
-cat $loc | grep "LimitRequestBody" >> $a
+cat /etc/httpd/conf/httpd.conf | grep "LimitRequestBody" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n11.1 Ensure SELinux Is Enabled in Enforcing Mode\n" >> $a
@@ -404,3 +406,4 @@ aa-unconfined --paranoid | grep apache2 >> $a
 echo -e "\n==========================================================================================\n" >> $a
 
 
+exit
