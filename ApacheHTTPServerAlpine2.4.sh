@@ -170,11 +170,9 @@ echo -e "\n5.6 Ensure the Default CGI Content test-cgi Script Is Removed\n" >> $
 rm $APACHE_PREFIX/cgi-bin/test-cgi
 echo -e "\nManual Check should also be done\n" >> $a
 
-
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n5.7 Ensure HTTP Request Methods Are Restricted\n" >> $a
 cat /usr/local/apache2/conf/httpd.conf | grep "LimitExcept" >> $a
-
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n5.8 Ensure the HTTP TRACE Method Is Disabled\n" >> $a
@@ -190,30 +188,8 @@ echo -e "\n5.10 Ensure Access to .ht* Files Is Restricted\n" >> $a
 cat /usr/local/apache2/conf/httpd.conf | grep -e "^<FilesMatch \"\^\\\.ht\">\|Require all denied\|<\/FilesMatch>" -n >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n5.11 Ensure Access to Inappropriate File Extensions Is Restricted\n" >> $a
-find */htdocs -type f -name '*.*' | awk -F. '{print $NF }' | sort -u >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep -e "^<FilesMatch \"\^\\\.*$\">\|Require all denied\|<\/FilesMatch>" -n >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep -e "^<FilesMatch \"\^\\\.*\\\.(\|Require all denied\|<\/FilesMatch>" -n >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n5.12 Ensure IP Address Based Requests Are Disallowed\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "RewriteEngine On\|RewriteCond \%{HTTP_HOST}\|RewriteCond \%{REQUEST_URI}\|RewriteRule \^\.(\.*) \- \[L\,F\]" -n >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n5.13 Ensure the IP Addresses for Listening for Requests Are Specified\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "^Listen" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n5.14 Ensure Browser Framing Is Restricted\n" >> $a
-grep -i X-Frame-Options $APACHE_PREFIX/conf/httpd.conf >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n6.1 Ensure the Error Log Filename and Severity Level Are Configured Correctly\n" >> $a
 cat /usr/local/apache2/conf/httpd.conf | grep "LogLevel\|ErrorLog" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n6.2 Ensure a Syslog Facility Is Configured for Error Logging\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "ErrorLog \"syslog" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n6.3 Ensure the Server Access Log Is Configured Correctly\n" >> $a
@@ -225,15 +201,6 @@ echo -e "\nManual Check Required\n" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n6.5 Ensure Applicable Patches Are Applied\n" >> $a
-echo -e "\nManual Check Required\n" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n6.6 Ensure ModSecurity Is Installed and Enabled\n" >> $a
-sudo httpd -M | grep security2_module >> $a
-
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n6.7 Ensure the OWASP ModSecurity Core Rule Set Is Installed and Enabled\n" >> $a
 echo -e "\nManual Check Required\n" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
@@ -287,22 +254,6 @@ URLS=$(for h in $LIPADDR $VHOSTS ; do echo "http://$h/"; done)
 for u in $URLS ; do echo -e "\n\n\n=== $u ==="; curl -fSs $u | head -c 300 ; done >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n7.10 Ensure the TLSv1.0 and TLSv1.1 Protocols are Disabled\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "^SSLProtocol TLSv1.2 *" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n7.11 Ensure OCSP Stapling Is Enabled\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "^SSLStaplingCache\|^SSLUseStapling" -n >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n7.12 Ensure HTTP Strict Transport Security Is Enabled\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "^Header always set Strict-Transport-Security \"max-age\=600\"" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n7.13 Ensure Only Cipher Suites That Provide Forward Secrecy Are Enabled\n" >> $a
-echo -e "\nManual Check Required\n" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n8.1 Ensure ServerTokens is Set to Prod or ProductOnly\n" >> $a
 cat /usr/local/apache2/conf/httpd.conf | grep "^ServerTokens" >> $a
 
@@ -311,22 +262,8 @@ echo -e "\n8.2 Ensure ServerSignature Is Not Enabled\n" >> $a
 cat /usr/local/apache2/conf/httpd.conf | grep "^ServerSignature Off" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n8.3 Ensure All Default Apache Content Is Removed\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "Include conf/extra/httpd-autoindex.conf" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "Alias /icons/ \"/var/www/icons/\"" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "<Directory \"/var/www/icons\">" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n8.4 Ensure ETag Response Header Fields Do Not Include Inodes\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "FileETag" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n9.1 Ensure the TimeOut Is Set to 10 or Less\n" >> $a
 cat /usr/local/apache2/conf/httpd.conf | grep "Timeout" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n9.2 Ensure KeepAlive Is Enabled\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "KeepAlive" >> $a
 
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n9.2 Ensure KeepAlive Is Enabled\n" >> $a
@@ -340,69 +277,13 @@ echo -e "\n=====================================================================
 echo -e "\n9.4 Ensure KeepAliveTimeout is Set to a Value of 15 or Less\n" >> $a
 cat /usr/local/apache2/conf/httpd.conf | grep "KeepAliveTimeout" >> $a
 
-
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n9.5 Ensure the Timeout Limits for Request Headers is Set to 40 or Less\n" >> $a
 cat /usr/local/apache2/conf/httpd.conf | grep "RequestReadTimeout" >> $a
 
-
 echo -e "\n==========================================================================================\n" >> $a
 echo -e "\n9.6 Ensure Timeout Limits for the Request Body is Set to 20 or Less\n" >> $a
 cat /usr/local/apache2/conf/httpd.conf | grep "RequestReadTimeout" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n10.1 Ensure the LimitRequestLine directive is Set to 512 or less\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "LimitRequestline" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n10.2 Ensure the LimitRequestFields Directive is Set to 100 or Less\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "LimitRequestFields" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n10.3 Ensure the LimitRequestFieldsize Directive is Set to 1024 or Less\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "LimitRequestFieldsize" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n10.4 Ensure the LimitRequestBody Directive is Set to 102400 or Less\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "LimitRequestBody" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n10.4 Ensure the LimitRequestBody Directive is Set to 102400 or Less\n" >> $a
-cat /usr/local/apache2/conf/httpd.conf | grep "LimitRequestBody" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n11.1 Ensure SELinux Is Enabled in Enforcing Mode\n" >> $a
-sestatus | grep -i mode >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n11.2 Ensure Apache Processes Run in the httpd_t Confined Context\n" >> $a
-ps -eZ | grep httpd >> $a
-ps -eZ | grep apache2 >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n11.3 Ensure the httpd_t Type is Not in Permissive Mode\n" >> $a
-semodule -l | grep permissive_httpd_t >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n11.4 Ensure Only the Necessary SELinux Booleans are Enabled\n" >> $a
-getsebool -a | grep httpd_ | grep '> on' >> $a
-echo -e "\n\n" >> $a
-semanage boolean -l | grep httpd_ | grep -v '(off , off)' >> $a
-
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n12.1 Ensure the AppArmor Framework Is Enabled\n" >> $a
-aa-status --enabled && echo Enabled >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n12.2 Ensure the Apache AppArmor Profile Is Configured Properly\n" >> $a
-echo -e "\nManual Check Required\n" >> $a
-
-echo -e "\n==========================================================================================\n" >> $a
-echo -e "\n12.3 Ensure Apache AppArmor Profile is in Enforce Mode (Scored)\n" >> $a
-aa-unconfined --paranoid | grep apache2 >> $a
-
-
 echo -e "\n==========================================================================================\n" >> $a
 
 
